@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+.envrc
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+
+# Developer-machine pip configuration (must not be committed; the internal
+# index URL would break `pip install` for external users)
+pip.conf
+pip.ini
+
+# HERITAGE imagery (downloaded separately, see README)
+dataset/
+
+# Raw mosaics from src/download_planet_mosaics.py
+*.tif
+*.tiff
+
+# Withheld site-coordinate inputs (not part of the public release)
+site_coordinates.csv
+sites_*.csv
+sites_*.geojson
+sites_*.gpkg
+
+# Build / log artefacts
+*.log
+.cache/
+.tmp/
+
+# ----------------------------------------------------------------------------
+# Paper-only artefacts. Only figs/ and src/ are tracked; the LaTeX manuscript,
+# bibliography, class files, build artefacts, paper-figure scripts, cached
+# JSON, and paper-only directories live alongside the repo locally but are
+# not part of the public release.
+# ----------------------------------------------------------------------------
+
+# LaTeX source and build products
+*.tex
+*.bib
+*.bst
+*.cls
+*.fls
+*.fdb_latexmk
+*.aux
+*.toc
+*.out
+*.synctex.gz
+*.bbl
+*.blg
+
+# Top-level Python (paper-figure generation; src/ scripts are tracked)
+/*.py
+
+# Top-level JSON (paper-figure caches)
+/*.json
+
+# Paper-only directories
+/figures/
+/review/
+/references/

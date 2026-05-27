@@ -1,0 +1,24 @@
+# Pinned dependencies for the HERITAGE dataset release.
+# Verified on 2026-05-18 with Python 3.10 / 3.11 / 3.12.
+
+# Geospatial stack
+geopandas==1.0.1
+pyproj==3.6.1
+rasterio==1.4.4
+shapely==2.0.6
+
+# Array / table / image I/O
+numpy==1.26.4
+pandas==2.2.3
+pillow>=11.1.0,<12
+
+# Plotting (LULC analysis only)
+matplotlib==3.9.2
+
+# Planet API + STAC clients
+planetary-computer==1.0.0
+pystac-client==0.8.5
+requests==2.32.3
+
+# Progress bars
+tqdm==4.66.5
