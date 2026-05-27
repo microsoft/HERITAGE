@@ -18,7 +18,7 @@ matplotlib==3.9.2
 # Planet API + STAC clients
 planetary-computer==1.0.0
 pystac-client==0.8.5
-requests==2.32.3
+requests==2.33.0
 
 # Progress bars
 tqdm==4.66.5
