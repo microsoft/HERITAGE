@@ -36,6 +36,11 @@ pip.ini
 # HERITAGE imagery (downloaded separately, see README)
 dataset/
 
+# Zenodo release artefacts (rebuilt locally; not tracked in git)
+HERITAGE-Afghanistan.zip
+HERITAGE-Global.zip
+manifest.csv
+
 # Raw mosaics from src/download_planet_mosaics.py
 *.tif
 *.tiff
