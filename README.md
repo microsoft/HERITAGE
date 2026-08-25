@@ -57,41 +57,53 @@ The table below compares HERITAGE to earlier archaeological remote-sensing datas
 
 ## Directory structure
 
+The Zenodo release ships as two archives so users who need only one subset can download the smaller file. Each archive carries a top-level `manifest.csv` describing every file inside it; the Zenodo record also carries a combined `manifest.csv` that is the concatenation of the two (Afghanistan rows first, then Global). See [Download](#download) for the validation recipe.
+
+**`HERITAGE-Afghanistan.zip`** (~10.8 GB, 210,783 files)
+
 ```
-HERITAGE/
-  dataset/
-    ground_truth.csv
-    Afghanistan/
-      looted_0/
-        2016_01.png
-        2016_02.png
-        ...
-        mask.png
-      looted_1/
-        ...
-      preserved_0/
-        ...
-      ...
-    Belize_Lubaantun/
-      2017_01.png
-      ...
-    Cambodia_Panteay_Chamar/
-      ...
-    [37 additional global site directories]
+looted/
+  looted_0/
+    2016_01.png
+    2016_02.png
+    ...
+    mask.png
+  looted_1/
+    ...
+preserved/
+  preserved_0/
+    ...
+  ...
+ground_truth.csv
+manifest.csv
+```
+
+**`HERITAGE-Global.zip`** (~874 MB, 3,937 files)
+
+```
+global/
+  Belize_Lubaantun/
+    2017_01.png
+    ...
+  Cambodia_Panteay_Chamar_/
+    ...
+  [37 additional global site directories]
+manifest.csv
 ```
 
 ## Layout notes
 
-- `ground_truth.csv` lists the three label fields for each of the 1,943 Afghanistan sites: `site_name`, `looted` (binary), and `looted_month` (integer month index when looting was detected; `-1` if confirmed but month unknown; `0` for preserved sites).
-- Afghanistan site directories follow the naming pattern `{looted,preserved}_N`, where `N` is a zero-indexed site identifier. Each contains monthly RGBA PNG chips and a `mask.png` raster delineating the archaeological area.
-- Global site directories follow the naming pattern `Country_SiteName` (39 directories across 15 countries). They contain monthly RGBA PNG chips; no per-site masks are provided.
+- `ground_truth.csv` lists the three label fields for each of the 1,943 Afghanistan sites: `site_name`, `looted` (binary), and `looted_month` (integer month index when looting was detected; `-1` if confirmed but month unknown; `0` for preserved sites). It ships at the top level of `HERITAGE-Afghanistan.zip`.
+- Afghanistan site directories follow the naming pattern `{looted,preserved}_N`, where `N` is a zero-indexed site identifier. They live under `looted/` or `preserved/` at the top level of `HERITAGE-Afghanistan.zip`. Each contains monthly RGBA PNG chips and a `mask.png` raster delineating the archaeological area.
+- Global site directories follow the naming pattern `Country_SiteName` (39 directories across 15 countries) and live under `global/` at the top level of `HERITAGE-Global.zip`. They contain monthly RGBA PNG chips; no per-site masks are provided.
 - File names follow `YYYY_MM.png`, where `YYYY` is the four-digit year and `MM` is the two-digit month.
 - Images are stored as four-channel PNGs (height x width x 4): the first three channels are R, G, B spectral values; the fourth (alpha) channel is a binary data-validity mask (255 for valid pixels, 0 for zero-padding outside the site extent).
 - Geographic metadata (coordinate reference system, affine transform) is removed during conversion to prevent direct geolocation of sites from the image files.
+- Users who want a single tree for training can extract both archives side by side and merge them; the combined layout is `looted/`, `preserved/`, `global/`, `ground_truth.csv` at one root.
 
 ## Ground-truth labels
 
-The schema below describes the three fields in `dataset/ground_truth.csv`, provided for each of the 1,943 Afghanistan sites. Labels were assigned by archaeological experts at ICONEM through visual interpretation of high-resolution satellite imagery, corroborated by field survey data where available. The annotation protocol first classified each site as looted or preserved based on the presence of surface disturbance in the imagery, then identified the specific month of disturbance for looted sites by inspecting sequential monthly images for the first appearance of pitting or trenching.
+The schema below describes the three fields in `ground_truth.csv` (top level of `HERITAGE-Afghanistan.zip`), provided for each of the 1,943 Afghanistan sites. Labels were assigned by archaeological experts at ICONEM through visual interpretation of high-resolution satellite imagery, corroborated by field survey data where available. The annotation protocol first classified each site as looted or preserved based on the presence of surface disturbance in the imagery, then identified the specific month of disturbance for looted sites by inspecting sequential monthly images for the first appearance of pitting or trenching.
 
 | Field | Type | Description |
 |---|---|---|
@@ -188,6 +200,32 @@ Looting labels were produced by archaeological experts at ICONEM. Multiple analy
 
 Load images with any standard image library that supports four-channel PNGs. Load all four channels explicitly and avoid loaders that apply alpha premultiplication, which would corrupt the RGB values.
 
+## Download
+
+The imagery is deposited on Zenodo as two archives. The DOI will be added on publication of the data paper.
+
+| Archive | Size | Files | Top-level contents |
+|---|---:|---:|---|
+| `HERITAGE-Afghanistan.zip` | ~10.8 GB | 210,783 | `looted/`, `preserved/`, `ground_truth.csv`, `manifest.csv` |
+| `HERITAGE-Global.zip` | ~874 MB | 3,937 | `global/`, `manifest.csv` |
+| `manifest.csv` (record top level) | ~22 MB | 214,720 rows | Concatenation of the two per-zip manifests (Afghanistan first, one shared header). |
+
+Each per-zip `manifest.csv` has columns `path`, `bytes`, `md5`, `subset`, `site_id`, `year`, `month`, sorted by `(subset, site_id, year or "0000", month or "00", path)`. The `subset` value is `afghanistan` for `looted/`, `preserved/`, and `ground_truth.csv` rows and `global` for `global/` rows. The `manifest.csv` file itself is excluded from every manifest.
+
+To validate an archive after download:
+
+1. Unzip `HERITAGE-Afghanistan.zip` to a directory `AFG/`; its top level is `AFG/looted/`, `AFG/preserved/`, `AFG/ground_truth.csv`, `AFG/manifest.csv`.
+2. Re-run the manifest generator against the unzipped tree and diff against the shipped copy:
+
+    ```bash
+    python generate_manifest.py --data-root AFG --out /tmp/check_afg.csv
+    md5sum AFG/manifest.csv /tmp/check_afg.csv  # digests must match
+    ```
+
+3. Repeat for `HERITAGE-Global.zip` extracted to `GLB/` (top level `GLB/global/`, `GLB/manifest.csv`).
+
+The `generate_manifest.py` reference implementation is deposited on Zenodo alongside the archives; it uses only the Python standard library and streams MD5 in 1 MB chunks, so it works with any Python 3.10 or newer interpreter.
+
 ## Baseline results
 
 Binary looting classification baselines on the Afghanistan subset, reported by Tadesse et al. (2026a). Results are averaged over 5-fold cross-validation with an 80/10/10 train/validation/test split. Feature-based methods use temporal mean aggregation; CNN methods use single-date imagery.
@@ -207,7 +245,8 @@ Binary looting classification baselines on the Afghanistan subset, reported by T
 ## Repository contents
 
 This repository ships the dataset documentation and the scripts that
-produce it; the imagery itself is hosted separately (see Download below).
+produce it; the imagery itself is hosted on Zenodo as two archives
+(see [Download](#download)).
 
 ```
 .
@@ -219,13 +258,14 @@ produce it; the imagery itself is hosted separately (see Download below).
 |-- requirements.txt                pinned Python dependencies
 |-- .gitignore
 |-- figs/                           figures referenced from the README
-|-- src/
-|   |-- download_planet_mosaics.py  download monthly basemaps from Planet
-|   |-- tif_to_png_4band.py         convert 4-band GeoTIFFs to RGBA PNGs
-|   |-- generate_site_masks.py      rasterize site polygons to mask.png
-|   `-- generate_lulc_analysis.py   reproduce the land-cover table and figure
-`-- dataset/                        (not in this repo; download separately)
+`-- src/
+    |-- download_planet_mosaics.py  download monthly basemaps from Planet
+    |-- tif_to_png_4band.py         convert 4-band GeoTIFFs to RGBA PNGs
+    |-- generate_site_masks.py      rasterize site polygons to mask.png
+    `-- generate_lulc_analysis.py   reproduce the land-cover table and figure
 ```
+
+The Zenodo release adds `HERITAGE-Afghanistan.zip`, `HERITAGE-Global.zip`, `manifest.csv`, and `generate_manifest.py`; the release layout is described in [Directory structure](#directory-structure).
 
 ### Installation
 
@@ -272,7 +312,10 @@ scripts.
    polygons for the global subset. Requires `PLANET_API_KEY` to be set
    (see Installation above).
 2. Run `src/tif_to_png_4band.py --mode all` to convert the downloaded
-   4-band GeoTIFFs into the RGBA PNG layout described in `Layout notes`.
+   4-band GeoTIFFs into RGBA PNGs. The output is an intermediate
+   `dataset/` staging tree with `dataset/Afghanistan/{looted,preserved}_N/`
+   and `dataset/<Country_SiteName>/` at the same level; the two Zenodo
+   archives are built from this tree (see below).
 3. Run `src/generate_site_masks.py --sites sites.csv --output dataset/Afghanistan`
    with a CSV of `(site_name, latitude, longitude, polygon_wkt)` rows to
    produce the per-site `mask.png` files at 186 x 186 pixels and 4.77
@@ -284,6 +327,15 @@ scripts.
    and writes a local `lulc_data.json` cache; subsequent invocations
    reuse the cache via `--phase analyze`. The fetch phase needs the
    same site coordinates as step 1.
+5. Package the staging tree into the Zenodo release. The mapping is:
+   `dataset/ground_truth.csv` and `dataset/Afghanistan/{looted,preserved}_N/`
+   go into `HERITAGE-Afghanistan.zip` (with `Afghanistan/` split into two
+   top-level `looted/` and `preserved/` directories); the remaining
+   `dataset/<Country_SiteName>/` directories go under `global/` in
+   `HERITAGE-Global.zip`. Each archive carries a top-level `manifest.csv`
+   produced by `generate_manifest.py` (deposited on Zenodo alongside the
+   archives). See [Download](#download) for the archive layout and the
+   validation recipe.
 
 Site coordinates and polygons are withheld from the public release to
 protect sites from exploitation; contact the authors if access is
