@@ -25,7 +25,7 @@ The dataset is partitioned into an Afghanistan subset (1,943 fully annotated sit
 | Attribute | Afghanistan sites | Global sites |
 |---|---|---|
 | Number of sites | 1,943 (898 looted, 1,045 preserved) | 39 across 15 countries |
-| Number of images | ~210,000 | ~3,900 |
+| Number of images | 208,839 | 3,937 |
 | Temporal range | January 2016 to December 2024 | January 2017 to May 2025 |
 | Months per site | up to 108 (median 107) | 100-101 |
 | Image dimensions | 186 x 186 pixels | per-site majority dimension |
@@ -46,9 +46,9 @@ The table below compares HERITAGE to earlier archaeological remote-sensing datas
 
 | Dataset | Sites | Countries | Months | Images | Change month | Site mask | Public |
 |---|---:|---:|---:|---:|:---:|:---:|:---:|
-| Casana (2015) | 14 | 1 | 1 | --- | --- | --- | No |
-| Parcak et al. (2016) | 200+ | 1 | 2-4 | --- | --- | --- | No |
-| Tapete & Cigna (2016) | 1 | 1 | --- | --- | --- | --- | No |
+| Casana (2015) | >1,200 | 1 | 1 | --- | --- | --- | No |
+| Parcak et al. (2016) | 1,100 | 1 | 2-4 | --- | --- | --- | No |
+| Tapete et al. (2016) | 1 | 1 | --- | --- | --- | --- | No |
 | Lauricella et al. (2017) | 1 | 1 | 1 | --- | --- | --- | No |
 | Tadesse et al. (2026a) | 1,943 | 1 | 96 | --- | --- | --- | No |
 | Tadesse et al. (2026b) | 1,943 | 5 | 96 | --- | Yes | --- | No |
@@ -137,26 +137,26 @@ Global site footprints range from 0.1 km^2 (Pakistan, Charsadda NW; Belize, Luba
 
 Land cover composition around each site was extracted from the ESA WorldCover 2021 product (10 m resolution, 11 classes derived from Sentinel-1 and Sentinel-2). Afghanistan sites are dominated by bare or sparse vegetation (61.5%) and cropland (27.7%), consistent with the arid steppe and irrigated agriculture of the northern Afghan provinces where sites concentrate. Global sites span a wider range: Belize (Lubaantun) sits within dense tropical forest (99.6% tree cover); Sudan (Uronarti), a Nile island fortress, is surrounded by permanent water (69.8%); Italian sites occupy Mediterranean grassland and forest; and Thai sites show mixed cropland, forest, and built-up areas. This diversity is relevant for transfer-learning experiments, as models trained on Afghan sites must generalize across different spectral backgrounds.
 
-Mean percentage of pixels per WorldCover class within each site's spatial extent, aggregated by country:
+Mean percentage of pixels per WorldCover class within each site's spatial extent, aggregated by country. The three residual WorldCover classes not shown (snow and ice, mangroves, moss and lichen) account for 0.0% of pixels at every HERITAGE site.
 
-| Country | N | Tree | Shrub | Grass | Crop | Built | Bare | Water | Wetland | Other |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Afghanistan | 1943 | 0.5 | 3.5 | 3.9 | 27.7 | 2.5 | 61.5 | 0.3 | 0.0 | 0.0 |
-| Belize | 1 | 99.6 | 0.0 | 0.4 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
-| Cambodia | 1 | 21.5 | 0.0 | 15.7 | 54.9 | 7.0 | 0.4 | 0.6 | 0.0 | 0.0 |
-| Ecuador | 2 | 91.6 | 0.1 | 3.9 | 0.1 | 0.0 | 0.8 | 3.5 | 0.0 | 0.0 |
-| Egypt | 5 | 4.3 | 1.6 | 1.1 | 8.1 | 9.3 | 75.6 | 0.0 | 0.1 | 0.0 |
-| Italy | 5 | 29.7 | 3.2 | 44.5 | 11.5 | 1.7 | 0.8 | 8.6 | 0.0 | 0.0 |
-| Mali | 1 | 0.0 | 14.6 | 66.6 | 11.3 | 0.0 | 0.4 | 0.0 | 7.0 | 0.0 |
-| Pakistan | 2 | 37.4 | 25.1 | 4.1 | 18.4 | 5.2 | 9.8 | 0.0 | 0.0 | 0.0 |
-| Peru | 6 | 24.2 | 3.0 | 36.1 | 10.5 | 3.7 | 20.2 | 1.9 | 0.4 | 0.0 |
-| Sudan | 1 | 1.2 | 0.9 | 0.0 | 0.0 | 0.0 | 28.0 | 69.8 | 0.0 | 0.0 |
-| Sweden | 2 | 19.6 | 0.0 | 72.2 | 4.1 | 0.2 | 1.4 | 2.4 | 0.1 | 0.0 |
-| Syria | 2 | 0.2 | 0.6 | 14.9 | 36.2 | 3.5 | 40.6 | 4.0 | 0.0 | 0.0 |
-| Thailand | 2 | 32.2 | 0.0 | 2.5 | 34.6 | 29.3 | 0.0 | 1.4 | 0.0 | 0.0 |
-| Turkey | 3 | 22.5 | 0.1 | 36.7 | 39.6 | 0.9 | 0.2 | 0.0 | 0.0 | 0.0 |
-| USA | 5 | 38.4 | 0.0 | 49.3 | 5.9 | 2.2 | 0.0 | 4.1 | 0.0 | 0.0 |
-| Ukraine | 1 | 10.0 | 0.0 | 36.1 | 1.5 | 28.6 | 0.4 | 23.4 | 0.0 | 0.0 |
+| Country | N | Tree | Shrub | Grass | Crop | Built | Bare | Water | Wetland |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Afghanistan | 1943 | 0.5 | 3.5 | 3.9 | 27.7 | 2.5 | 61.5 | 0.3 | 0.0 |
+| Belize | 1 | 99.6 | 0.0 | 0.4 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
+| Cambodia | 1 | 21.5 | 0.0 | 15.7 | 54.9 | 7.0 | 0.4 | 0.6 | 0.0 |
+| Ecuador | 2 | 91.6 | 0.1 | 3.9 | 0.1 | 0.0 | 0.8 | 3.5 | 0.0 |
+| Egypt | 5 | 4.3 | 1.6 | 1.1 | 8.1 | 9.3 | 75.6 | 0.0 | 0.1 |
+| Italy | 5 | 29.7 | 3.2 | 44.5 | 11.5 | 1.7 | 0.8 | 8.6 | 0.0 |
+| Mali | 1 | 0.0 | 14.6 | 66.6 | 11.3 | 0.0 | 0.4 | 0.0 | 7.0 |
+| Pakistan | 2 | 37.4 | 25.1 | 4.1 | 18.4 | 5.2 | 9.8 | 0.0 | 0.0 |
+| Peru | 6 | 24.2 | 3.0 | 36.1 | 10.5 | 3.7 | 20.2 | 1.9 | 0.4 |
+| Sudan | 1 | 1.2 | 0.9 | 0.0 | 0.0 | 0.0 | 28.0 | 69.8 | 0.0 |
+| Sweden | 2 | 19.6 | 0.0 | 72.2 | 4.1 | 0.2 | 1.4 | 2.4 | 0.1 |
+| Syria | 2 | 0.2 | 0.6 | 14.9 | 36.2 | 3.5 | 40.6 | 4.0 | 0.0 |
+| Thailand | 2 | 32.2 | 0.0 | 2.5 | 34.6 | 29.3 | 0.0 | 1.4 | 0.0 |
+| Turkey | 3 | 22.5 | 0.1 | 36.7 | 39.6 | 0.9 | 0.2 | 0.0 | 0.0 |
+| USA | 5 | 38.4 | 0.0 | 49.3 | 5.9 | 2.2 | 0.0 | 4.1 | 0.0 |
+| Ukraine | 1 | 10.0 | 0.0 | 36.1 | 1.5 | 28.6 | 0.4 | 23.4 | 0.0 |
 
 ![Land cover composition by country](figs/fig_lulc_breakdown.png)
 
@@ -186,14 +186,14 @@ The combined dataset spans 113 months from January 2016 through May 2025: up to 
 
 ## Label validation
 
-Looting labels were produced by archaeological experts at ICONEM. Multiple analysts reviewed each site; disagreements were resolved through discussion. Of 898 looted sites, 118 have a confirmed change month; the remaining 780 are labelled as looted without a specific month (`looted_month = -1`). Two prior studies provide indirect validation: Tadesse et al. (2026a) trained classifiers on these labels and reported performance consistent with accurate annotations, and Tadesse et al. (2026b) used the temporal annotations to train and evaluate change detection models with results that corroborate the annotated change months.
+Ground-truth looting labels for Afghanistan sites were produced by a single primary annotator at ICONEM through systematic visual interpretation of high-resolution reference imagery, with qualitative review by domain experts on the ICONEM team. Field-survey records were consulted case by case where they were available for a given site. Of 898 looted sites, 118 have a confirmed change month; the remaining 780 are labelled as looted without a specific month (`looted_month = -1`). The change-month annotation campaign covered the 2016-2021 window; the 2022-2025 imagery is included in the release but is not month-localised. Because the binary and change-month labels were produced by a single annotator under expert review rather than by parallel double annotation, no formal inter-annotator agreement statistic is reported for this release. Two prior studies provide indirect validation: Tadesse et al. (2026a) trained classifiers on these labels and reported performance consistent with accurate annotations, and Tadesse et al. (2026b) used the temporal annotations to train and evaluate change detection models with results that corroborate the annotated change months.
 
 ## Counts
 
 | Subset       | Sites | Countries | Images   | Temporal span                    |
 |--------------|-------|-----------|----------|----------------------------------|
-| Afghanistan  | 1,943 | 1         | ~210,000 | 2016-01 to 2025-05 (up to 108 mo)|
-| Global       | 39    | 15        | ~3,900   | 2016-01 to 2025-05 (100-101 mo)  |
+| Afghanistan  | 1,943 | 1         | 208,839  | 2016-01 to 2025-05 (up to 108 mo)|
+| Global       | 39    | 15        | 3,937    | 2016-01 to 2025-05 (100-101 mo)  |
 | **Total**    | 1,982 | 16        | 212,776  | 113 months                       |
 
 ## Loading
@@ -348,5 +348,6 @@ required for research.
 
 Both companion repositories are released under the MIT License. The
 dataset DOI and full citation will be assigned on publication of the
-data paper, *HERITAGE: A Global Multi-Temporal Satellite Dataset for
-Archaeological Site Monitoring*.
+data paper, *HERITAGE: A Multi-Temporal RGB Satellite Dataset for
+Archaeological Looting Detection in Afghanistan and Cross-Geography
+Monitoring*.
